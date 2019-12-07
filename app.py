@@ -23,11 +23,11 @@ class SongLyric(Resource):
         key = getenv("VAGALUME_LYRIC_API_KEY", "")
 
         response = requests.get("https://api.vagalume.com.br/search.php?art={artist}&mus={song}&apikey={key}".format(artist=args.artist, song=args.song, key=key)).text
-        return json.loads(response)
-
+        obj = json.loads(response)["mus"][0]
+        return obj
 
 api.add_resource(HealthCheck, '/')
-api.add_resource(SongLyric, '/api/v1/lyrics')
+api.add_resource(SongLyric, '/api/v1/get_lyric')
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
