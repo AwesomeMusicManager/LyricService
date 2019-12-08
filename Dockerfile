@@ -6,8 +6,10 @@ WORKDIR /app
 
 RUN apk add -U --no-cache -qq bash \
     && pip install --upgrade pip pipenv \
-    && pip install -r ./requirements.txt
+    && pip install -r requirements.txt
 
 RUN pipenv install -dev
+
+ENV MONGO_PASSWORD=L4yVXicZOGG1k73S
 
 CMD python app.py
