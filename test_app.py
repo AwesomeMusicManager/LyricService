@@ -1,20 +1,28 @@
 import os
 import tempfile
+from flask import Flask, request
+import app
+from unittest import TestCase
 
 import pytest
 
-from flaskr import flaskr
+
+app = Flask(__name__)
+
+# @app.route('/')
+# def test_heath_check2():
+#     json_data = request.get_json()
+#     print(json_data)
+# with app.test_health_check() as c:
+#     rv = c.get('/')
+#     json_data = rv.get_json()
+#     print(json_data)
 
 
-@pytest.fixture
-def client():
-    db_fd, flaskr.app.config['DATABASE'] = tempfile.mkstemp()
-    flaskr.app.config['TESTING'] = True
+class TestIntegrations(TestCase):
+    def setUp(self):
+        self.app = app.test_client()
 
-    with flaskr.app.test_client() as client:
-        with flaskr.app.app_context():
-            flaskr.init_db()
-        yield client
-
-    os.close(db_fd)
-    os.unlink(flaskr.app.config['DATABASE'])
+    def test_thing(self):
+        response = self.app.get('/api/v1/get_lyric?artist=MFDOOM&song=Doomsday')
+        assert response.status == '200'

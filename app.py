@@ -36,7 +36,7 @@ class SongLyric(Resource):
             response = requests.get("https://api.vagalume.com.br/search.php?art={artist}&mus={song}".format(artist=args.artist, song=args.song)).text
 
             json_response = json.loads(response)
-            if json_response.get("type") not in ["song_notfound", "not_found"]:
+            if json_response.get("type") not in ["song_notfound", "notfound"]:
                 obj = json_response["mus"][0]
 
                 mongo.db.lyrics.insert_one({"name": obj["name"], "lyrics": obj["text"]})
