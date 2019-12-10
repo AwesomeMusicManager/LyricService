@@ -1,17 +1,18 @@
-FROM python:3.7-alpine3.8
+FROM python:3.7-slim
 
-ADD . /app
-
-WORKDIR /app
-
-RUN apk add -U --no-cache -qq bash \
-    && pip install --upgrade pip pipenv \
-    && pip install -r requirements.txt
-
-RUN pipenv install -dev
+RUN apt-get update
+RUN mkdir /code
+WORKDIR /code
+ADD requirements.txt /code/
+RUN pip install -r requirements.txt
+ADD . /code/
 
 ENV MONGO_PASSWORD=L4yVXicZOGG1k73S
 
-EXPOSE 5000
+COPY init.sh /usr/local/bin/
 
-CMD python app.py
+RUN chmod u+x /usr/local/bin/init.sh
+
+EXPOSE 2222 5000
+
+ENTRYPOINT ["init.sh"]
