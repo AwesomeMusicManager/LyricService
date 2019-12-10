@@ -2,6 +2,7 @@ from os import getenv
 from flask import Flask, request
 from flask_pymongo import PyMongo
 from flask_restful import Resource, Api, reqparse
+from flask_swagger_ui import get_swaggerui_blueprint
 import requests
 import json
 
@@ -12,8 +13,21 @@ mongo_password = getenv("MONGO_PASSWORD", "")
 
 app.config['MONGO_URI'] = "mongodb+srv://admin:{}@cluster0-hb5he.mongodb.net/lyric_service?retryWrites=true&w=majority".format(mongo_password)
 
-
 mongo = PyMongo(app)
+
+### swagger specific ###
+SWAGGER_URL = '/swagger'
+API_URL = '/static/swagger.json'
+
+SWAGGERUI_BLUEPRINT = get_swaggerui_blueprint(
+    SWAGGER_URL,
+    API_URL,
+    config={
+        'app_name': "Lyric Service"
+    }
+)
+app.register_blueprint(SWAGGERUI_BLUEPRINT, url_prefix=SWAGGER_URL)
+### end swagger specific ###
 
 class HealthCheck(Resource):
     def get(self):
