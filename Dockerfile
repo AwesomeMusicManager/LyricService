@@ -12,4 +12,6 @@ RUN pipenv install -dev
 
 ENV MONGO_PASSWORD=L4yVXicZOGG1k73S
 
+EXPOSE 5000
+
 CMD python app.py
