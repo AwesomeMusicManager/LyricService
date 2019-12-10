@@ -62,4 +62,5 @@ api.add_resource(HealthCheck, '/')
 api.add_resource(SongLyric, '/api/v1/get_lyric')
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0')
+    port = int(getenv('PORT', 5000))
+    app.run(debug=True, host='0.0.0.0',port=port)

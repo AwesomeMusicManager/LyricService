@@ -13,6 +13,6 @@ COPY init.sh /usr/local/bin/
 
 RUN chmod u+x /usr/local/bin/init.sh
 
-EXPOSE 2222 5000
+EXPOSE 5000
 
 ENTRYPOINT ["init.sh"]
