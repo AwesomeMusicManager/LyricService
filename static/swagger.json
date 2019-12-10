@@ -1,0 +1,33 @@
+openapi: 3.0.0
+info:
+  title: Lyric Service
+  contact:
+    email: rubens.csantos@al.infnet.edu.br
+  version: 1.0.0-oas3
+servers:
+  - url: /api/v1
+tags:
+  - name: Letra de música
+    description: Example API for requesting song lyrics
+paths:
+  /get_lyric:
+    get:
+      tags:
+        - Letra de música
+      summary: Retorna lista letra da música
+      parameters:
+        - name: artist
+          in: query
+          schema:
+            type: string
+          required: true
+          description: artist name
+        - name: song
+          in: query
+          schema:
+            type: string
+          required: true
+          description: song name
+      responses:
+        '200':
+          description: OK
