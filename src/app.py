@@ -5,7 +5,6 @@ from flask_restful import Resource, Api, reqparse
 from flask_swagger_ui import get_swaggerui_blueprint
 import requests
 import json
-import logging
 
 app = Flask(__name__)
 api = Api(app)
@@ -18,7 +17,7 @@ mongo = PyMongo(app)
 
 ### swagger specific ###
 SWAGGER_URL = '/swagger'
-API_URL = 'static/swagger.json'
+API_URL = '/static/swagger.json'
 
 SWAGGERUI_BLUEPRINT = get_swaggerui_blueprint(
     SWAGGER_URL,

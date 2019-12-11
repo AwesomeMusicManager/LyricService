@@ -1,2 +1,2 @@
 #!/bin/bash
-gunicorn --max-requests 200 -w 4 --bind 0.0.0.0:5000 app:app
+cd  src && gunicorn --max-requests 200 -w 4 --bind 0.0.0.0:${PORT} app:app
