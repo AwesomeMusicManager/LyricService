@@ -56,10 +56,31 @@ class SongLyric(Resource):
                 mongo.db.lyrics.insert_one({"name": obj["name"], "lyrics": obj["text"]})
                 return obj["text"]
             return json_response
+
+
+class FindSongsWithExcerpt(Resource):
+    def get(self):
+        parser = reqparse.RequestParser()
+
+        parser.add_argument("excerpt", type=str)
+
+        args = parser.parse_args()
+
+        response = requests.get("https://api.vagalume.com.br/search.excerpt?q={excerpt}".format(excerpt=args.excerpt)).text
+
+        song_list = json.loads(response).get("response").get("docs")
+
+        sanitized_list = []
+
+        for song in song_list:
+            sanitized_list.append(({"artist": song["band"], "title": song["title"]}))
+
+        return sanitized_list
             
 
 api.add_resource(HealthCheck, '/')
 api.add_resource(SongLyric, '/api/v1/get_lyric')
+api.add_resource(FindSongsWithExcerpt, '/api/v1/find_song')
 
 if __name__ == '__main__':
     port = int(getenv('PORT', 5000))
