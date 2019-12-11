@@ -5,9 +5,9 @@ RUN mkdir /code
 WORKDIR /code
 ADD requirements.txt /code/
 RUN pip install -r requirements.txt
-ADD . /code/
+ADD . /code
 
-ENV MONGO_PASSWORD=L4yVXicZOGG1k73S
+ENV PORT=5000
 
 COPY init.sh /usr/local/bin/
 
