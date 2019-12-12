@@ -1,6 +1,5 @@
 from os import getenv
 from flask_pymongo import PyMongo
-from bson.objectid import ObjectId
 
 mongo = None
 
@@ -29,11 +28,5 @@ class mongoData:
 
     def add_one(self, data):
         return self.__get_mongo().db.lyrics.insert_one(data)
-
-    def remove_one(self, id):
-        return self.__get_mongo().db.lyrics.delete_one({'_id': ObjectId(id)})
-
-    def get_one(self, id):
-        return self.__get_mongo().db.lyrics.find_one_or_404(ObjectId(id))
 
 

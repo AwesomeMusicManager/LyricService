@@ -5,5 +5,4 @@ Flask-PyMongo
 dnspython
 requests
 pytest
-bson
 mockupdb
