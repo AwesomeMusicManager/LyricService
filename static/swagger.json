@@ -19,7 +19,7 @@
     }
   ],
   "paths": {
-    "/get_lyric": {
+    "/lyric": {
       "get": {
         "tags": [
           "Letra de música"
