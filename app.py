@@ -1,5 +1,5 @@
 from os import getenv
-from flask import Flask
+from flask import Flask, jsonify
 from project.health_check import HealthCheck
 from project.swagger import Swagger
 from project.mongo import mongoData
@@ -49,8 +49,17 @@ class SongLyric(Resource):
             return json_response
 
 
+class CheckLyricService(Resource):
+    def get(self):
+        response = requests.get("http://singer-service-app.herokuapp.com").text
+        json_response = "Singer service responded with {}".format(jsonify(response))
+        logging.info("Healthy")
+        return json_response
+
+
 api.add_resource(HealthCheck, '/')
 api.add_resource(Swagger, '/docs')
+api.add_resource(CheckLyricService, '/api/v1/singer_check')
 api.add_resource(SongLyric, '/api/v1/lyric')
 
 

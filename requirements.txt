@@ -4,5 +4,3 @@ gunicorn
 Flask-PyMongo
 dnspython
 requests
-pytest
-mockupdb
