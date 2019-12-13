@@ -17,18 +17,18 @@ logging.basicConfig(level=logging.INFO,
 
 logger = logging.getLogger()
 
-song_service_url = getenv("SONG_SERVICE_URL", "")
-
+song_service_url = getenv("SONG_SERVICE_URL", "https://amm-song-service.herokuapp.com")
 logging.info("Started Service")
 
 
 def handle_request(mongo, args):
     logging.info("Handling request")
     if not args.artist:
-        response = requests.get(song_service_url+"/api/v1/song/{}".format(args.song))
-        
-        response = make_request_to_external_api(response["singer"], response["name"])
+        response = requests.get(song_service_url+"/song/{}".format(args.song))
 
+        json_response = json.loads(response.text)
+        
+        response = make_request_to_external_api(json_response.get("singer"), json_response.get("name"))
         json_response = json.loads(response)
         if json_response.get("type") not in ["song_notfound", "notfound"]:
             logging.info("A song was found")
@@ -76,7 +76,7 @@ class SongLyric(Resource):
             logging.info("Found song lyric in database")
             return generate_response(get_song.next()["lyrics"])
 
-        handle_request(args)
+        return handle_request(mongo, args)
 
 
 class CheckLyricService(Resource):
