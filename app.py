@@ -34,7 +34,7 @@ class SongLyric(Resource):
 
         if get_song.count() >= 1:
             logging.info("Found song lyric in database")
-            return get_song.next()["lyrics"]
+            return {"lyric": get_song.next()["lyrics"]}
         else:
             response = requests.get("https://api.vagalume.com.br/search.php?art={artist}&mus={song}".format(artist=args.artist, song=args.song)).text
             logging.info("Searched for song in API")
@@ -45,7 +45,7 @@ class SongLyric(Resource):
                 obj = json_response["mus"][0]
 
                 mongo.add_one({"name": obj["name"], "lyrics": obj["text"]})
-                return obj["text"]
+                return {"lyric": obj["text"]}
             return json_response
 
 
