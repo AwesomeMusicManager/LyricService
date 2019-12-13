@@ -24,7 +24,7 @@
         "tags": [
           "Letra de música"
         ],
-        "summary": "Retorna lista letra da música",
+        "summary": "Retorna letra da música",
         "parameters": [
           {
             "name": "artist",
@@ -32,7 +32,7 @@
             "schema": {
               "type": "string"
             },
-            "required": true,
+            "required": false,
             "description": "artist name"
           },
           {
@@ -45,6 +45,19 @@
             "description": "song name"
           }
         ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/singer_check": {
+      "get": {
+        "tags": [
+          "Health Check do SingerService"
+        ],
+        "summary": "Retorna Health Check do SingerService",
         "responses": {
           "200": {
             "description": "OK"
