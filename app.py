@@ -27,16 +27,23 @@ def handle_request(mongo, args):
         response = requests.get(song_service_url+"/song/{}".format(args.song))
 
         json_response = json.loads(response.text)
-        
+
         response = make_request_to_external_api(json_response.get("singer"), json_response.get("name"))
         json_response = json.loads(response)
-        if json_response.get("type") not in ["song_notfound", "notfound"]:
-            logging.info("A song was found")
-            obj = json_response["mus"][0]
+        return handle_external_api_response(mongo, json_response)
+    response = make_request_to_external_api(args.artist, args.song)
+    json_response = json.loads(response)
+    return handle_external_api_response(mongo, json_response)
 
-            insert_new_lyrics(mongo, obj)
-            return generate_response(obj["text"])
-        return generate_response(json_response)
+
+def handle_external_api_response(mongo, json_response):
+    if json_response.get("type") not in ["song_notfound", "notfound"]:
+        logging.info("A song was found")
+        obj = json_response["mus"][0]
+
+        insert_new_lyrics(mongo, obj)
+        return generate_response(obj["text"])
+    return generate_response(json_response)
 
 
 def make_request_to_external_api(artist, song):
