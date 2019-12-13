@@ -1,5 +1,6 @@
 from os import getenv
 from flask import Flask, jsonify, abort
+from flask_cors import CORS
 from project.health_check import HealthCheck
 from project.swagger import Swagger
 from project.mongo import mongoData
@@ -9,6 +10,7 @@ import json
 import logging
 
 app = Flask(__name__)
+CORS(app)
 api = Api(app)
 
 logging.basicConfig(level=logging.INFO,
