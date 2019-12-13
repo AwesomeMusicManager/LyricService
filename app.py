@@ -1,5 +1,5 @@
 from os import getenv
-from flask import Flask, jsonify
+from flask import Flask, jsonify, abort
 from project.health_check import HealthCheck
 from project.swagger import Swagger
 from project.mongo import mongoData
@@ -11,12 +11,50 @@ import logging
 app = Flask(__name__)
 api = Api(app)
 
-logging.basicConfig(filename="logFile.txt",
-                    filemode='a',
+logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(levelname)s-%(message)s',
                     datefmt='%Y-%m-%d %H:%M:%S')
 
+logger = logging.getLogger()
+
+song_service_url = getenv("SONG_SERVICE_URL", "")
+
 logging.info("Started Service")
+
+
+def handle_request(mongo, args):
+    logging.info("Handling request")
+    if not args.artist:
+        response = requests.get(song_service_url+"/api/v1/song/{}".format(args.song))
+        
+        response = make_request_to_external_api(response["singer"], response["name"])
+
+        json_response = json.loads(response)
+        if json_response.get("type") not in ["song_notfound", "notfound"]:
+            logging.info("A song was found")
+            obj = json_response["mus"][0]
+
+            insert_new_lyrics(mongo, obj)
+            return generate_response(obj["text"])
+        return generate_response(json_response)
+
+
+def make_request_to_external_api(artist, song):
+    response = requests.get("https://api.vagalume.com.br/search.php?art={artist}&mus={song}".format(artist=artist,
+                                                                                         song=song)).text
+    logging.info("Searched for song in external API")
+    return response
+
+
+def generate_response(str):
+    logging.info("Generating default response")
+    return {"lyric": str}
+
+
+def insert_new_lyrics(mongo, obj):
+    logging.info("Inserting new lyrics to database")
+    mongo.add_one({"name": obj["name"], "lyrics": obj["text"]})
+    return
 
 
 class SongLyric(Resource):
@@ -30,23 +68,15 @@ class SongLyric(Resource):
 
         mongo = mongoData(app)
 
-        get_song = mongo.filter({"name": args.song})
+        if not args.song:
+            abort(400, "request should at least contain song parameter")
 
+        get_song = mongo.filter({"name": args.song})
         if get_song.count() >= 1:
             logging.info("Found song lyric in database")
-            return {"lyric": get_song.next()["lyrics"]}
-        else:
-            response = requests.get("https://api.vagalume.com.br/search.php?art={artist}&mus={song}".format(artist=args.artist, song=args.song)).text
-            logging.info("Searched for song in API")
+            return generate_response(get_song.next()["lyrics"])
 
-            json_response = json.loads(response)
-            if json_response.get("type") not in ["song_notfound", "notfound"]:
-                logging.info("A song was found")
-                obj = json_response["mus"][0]
-
-                mongo.add_one({"name": obj["name"], "lyrics": obj["text"]})
-                return {"lyric": obj["text"]}
-            return json_response
+        handle_request(args)
 
 
 class CheckLyricService(Resource):
