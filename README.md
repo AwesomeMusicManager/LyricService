@@ -20,3 +20,7 @@ Contém dois possíveis parâmetros:
 - song -> parâmetro obrigatório, nome da música da qual a letra será buscada
 - artist -> parâmetro opcional.
 Caso o parâmetro `artist` não seja passado, será feita uma requisição no [SongService](https://github.com/AwesomeMusicManager/SongService) para encontrá-lo.
+
+## GET /api/v1/singer_check
+
+Endpoint para realizar o Health Check do outro Microserviço que implementei, o [SingerService](https://github.com/AwesomeMusicManager/SingerService).
